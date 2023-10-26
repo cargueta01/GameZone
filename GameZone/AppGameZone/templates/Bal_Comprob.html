@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<body>
+  <div class="container"><br><br><br>
+
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-8">
+        <h2>Balance de comprobacion {{titulo.nombreLibro}}</h2><br><br>
+        <form enctype="multipart/form-data" method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-5">
+              <select class="form-select" name="libroSeleccionado" required>
+                {% for l in libros %}
+                <option value={{l.idLibro}}>{{l.nombreLibro}} <p> -> </p> {{l.fechaDeApertura}} <p> -- </p>
+                  {{l.fechaDeCierre}} </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary">Mostrar balance del libro</button><br><br><br><br>
+            </div>
+        </form><br><br>
+      </div>
+    </div><br><br><br>
+    <div class="row">
+      <div class="container">
+        <div class="table-responsive" style="border-color: black;">
+          <table class="table table-bordered table-striped table-sm">
+            <thead>
+              <tr>
+                <th scope="col" style="text-align: center;">Nombre de la Cuenta</th>
+                <th scope="col" style="text-align: center;">Debe</th>
+                <th scope="col" style="text-align: center;">Haber</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background-color: aqua;">
+                <td><b>Activos</b></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Caja</td>
+                <td>{{ sumas.Caja }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Inventario</td>
+                <td>{{ sumas.Inventario }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Alquiler de Local</td>
+                <td>{{ sumas.Pago_anticipado_de_local }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>IVA Credito Fiscal</td>
+                <td>{{ sumas.IVA_crédito_fiscal }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Equipo Computo</td>
+                <td>{{ sumas.Equipo_de_computo }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Mobiliario</td>
+                <td>{{ sumas.Mobiliario }}</td>
+                <td></td>
+              </tr>
+              <tr style="background-color:olivedrab;">
+                <td><b>Pasivos</b></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>IVA Debito Fiscal</td>
+                <td></td>
+                <td>{{ sumas.IVA_débito_fiscal }}</td>
+              </tr>
+              <tr style="background-color:khaki;">
+                <td><b>Capital</b></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Capital</td>
+                <td></td>
+                <td>{{ sumas.Capital_contable }}</td>
+              </tr>
+              <tr style="background-color:chocolate;">
+                <td><b>Gastos y Costos</b></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Descuento sobre venta</td>
+                <td>{{ sumas.Descuento_sobre_venta }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Gasto de venta</td>
+                <td>{{ sumas.Gasto_de_venta }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Devolución sobre venta</td>
+                <td>{{ sumas.Devoluciones_sobre_venta }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Compras</td>
+                <td>{{ sumas.Compras }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pago de Servicios Básicos</td>
+                <td>{{ sumas.Pago_de_servicios_básicos }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pago de Empleados</td>
+                <td>{{ sumas.Pago_de_empleados }}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Gastos sobre compras</td>
+                <td>{{ sumas.Gastos_sobre_compras }}</td>
+                <td></td>
+              </tr>
+              <tr style="background-color:slateblue;">
+                <td><b>Ingresos</b></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Ventas</td>
+                <td></td>
+                <td>{{ sumas.Ventas }}</td>
+              </tr>
+              <tr>
+                <td>Descuentos sobre compras</td>
+                <td></td>
+                <td>{{ sumas.Descuento_sobre_compra }}</td>
+              </tr>
+              <tr>
+                <td>Devoluciones sobre compras</td>
+                <td></td>
+                <td>{{ sumas.Devoluciones_sobre_compra }}</td>
+              </tr>
+              <tr style="background-color:rgb(60, 204, 197);">
+                <td><b>Total</b></td>
+                <td>{{debeTotal}}</td>
+                <td>{{haberTotal}}</td>
+              </tr>
+            </tbody>
+          </table><br><br><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</body>
+
+{% endblock %}

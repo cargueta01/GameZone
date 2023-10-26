@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<body class="bg-light">
+
+  <div class="container">
+
+    <div class="py-5 text-center">
+      <h2>Registro de Inventarios</h2>
+    </div>
+
+    <div class="container col-lg-8">
+      <h4 class="mb-3">Formulario de Registro de Inventario</h4><br>
+
+
+      <form class="needs-validation" novalidate enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="date" class="form-label">Fecha del Movimiento</label>
+            <input class="form-control" type="date" name="fechaMovimiento" required>
+            <div class="invalid-feedback">
+              Digite una fecha
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Tipo de Movimiento</label>
+            <select class="form-select" name="tipoMovimiento" required>
+              <option value="Entrada">Entrada</option>
+              <option value="Salida">Salida</option>
+            </select>
+
+          </div>
+        </div><br><br>
+
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label">Cantidad de Material</label>
+            <input type="number" class="form-control" name="cantidadMaterial" required>
+            <div class="invalid-feedback">
+              Digite una cantidad
+            </div>
+          </div>
+        </div><br>
+
+        <div class="row g-3">
+
+          <div class="col-md-12">
+            <label class="form-label">Precio Unitario del Material</label>
+            <input type="number" class="form-control" name="precioUnitario" >
+            
+          </div><br>
+        </div><br>
+
+        <div class="col-md-12">
+          <label for="address2" class="form-label"> Descripcion </label>
+          <input type="text" class="form-control" id="address2" name="descripcion" required>
+          <div class="invalid-feedback">
+            Escriba una descripcion
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-12">
+            <hr class="my-4">
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <button class="w-100 btn btn-primary btn-lg" type="submit">Agregar Movimiento</button>
+          </div>
+        </div>
+      </form>
+    </div><br><br><br><br><br>
+
+    <div class="row g-3">
+      <h2 style="text-align: center;">Tabla de Registro de Inventario</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <td colspan="11" style="text-align: center;"><b>Inventario GameZone S.A de C.V</b></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="text-align: center;">
+              <td rowspan="2" style="background-color: lightseagreen;"><b>Fecha</b></td>
+              <td rowspan="2" style="background-color: lightseagreen;"><b>Descripcion</b></td>
+              <td colspan="3" style="background-color: lightcoral;"><b>Entradas</b></td>
+              <td colspan="3" style="background-color: lightsalmon;"><b>Salidas</b></td>
+              <td colspan="3" style="background-color: lightpink;"><b>Saldo</b></td>
+            </tr>
+            <tr style="text-align: center; background-color: lightgrey;">
+              <td>Cantidad</td>
+              <td>Precio Unitario</td>
+              <td>Monto Total</td>
+              <td>Cantidad</td>
+              <td>Precio Unitario</td>
+              <td>Monto Total</td>
+              <td>Cantidad</td>
+              <td>Precio Unitario</td>
+              <td>Monto Total</td>
+            </tr>
+            <tr style="text-align: center;">
+              
+              <!--Aqui va la fecha-->
+              <td>17/08/2023</td>
+              <td>prueba</td>
+
+              <!--Aqui van los datos de las entradas-->
+              <td>10</td>
+              <td>1.50</td>
+              <td>15</td>
+
+              <!--Aqui van los datos de las salidas-->
+              <td>20</td>
+              <td>1.60</td>
+              <td>32</td>
+
+              <!--Aqui van los datos del saldo-->
+              <td>15</td>
+              <td>1.30</td>
+              <td>19.5</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><br><br><br>
+    </div>
+  </div>
+
+
+  <script src="../static/bootstrap/js/form-validation.js"></script>
+</body>
+
+{% endblock %}

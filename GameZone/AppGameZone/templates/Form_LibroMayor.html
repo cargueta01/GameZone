@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+</style>
+
+<body class="bg-light">
+
+  <div class="container">
+
+    <div class="py-5 text-center">
+      <h2>Registrar un Libro Mayor</h2>
+    </div>
+
+    <div class="container col-lg-8">
+      <h4 class="mb-3">Formulario de registro de libro Mayor</h4><br>
+
+
+      <form class="needs-validation" novalidate enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="country" class="form-label">Nombre del libro mayor</label>
+            <input class="form-control" name="nombreLibro" required>
+            <div class="invalid-feedback">
+              Escriba un nombre para el libro mayor
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label for="date" class="form-label">Fecha de apertura</label>
+            <input type="date" class="form-control" id="fecha" name="fechaApertura" required>
+            <div class="invalid-feedback">
+              Digite una fecha
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label for="date" class="form-label">Fecha de cierre</label>
+            <input type="date" class="form-control" id="fecha" name="fechaCierre" required>
+            <div class="invalid-feedback">
+              Digite una fecha
+            </div>
+          </div>
+        </div><br>
+
+        <div class="row g-3">
+          <div class="col-md-12">
+            <hr class="my-4">
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-2"></div>
+          <div class="col-md-3">
+            <button class="w-100 btn btn-primary btn-lg" type="submit">Agregar Libro Mayor</button>
+          </div>
+          <div class="col-md-2"></div>
+          <div class="col-md-3">
+            <a href="{% url 'LibroMayor' %}" class="w-100 btn btn-primary btn-lg" type="button">Visualizar Libro
+              Mayor</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  </div>
+
+  <script src="../static/bootstrap/js/form-validation.js"></script>
+</body>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Zone</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+</head>
+<body>
+    <header>
+        <div class="px-3 py-2 bg-dark text-white flex-nowrap">
+          <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+              <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+              </a>
+    
+              <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                <li>
+                  <a href="{% url 'inicio' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                    Inicio
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'reg_transaccion' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                    Registrar Transaccion
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'Cat_cuentas' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                    Catalogo de Cuentas
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'FormLibroMayor' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                    Libro Mayor
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'Balance' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                      Balance de Comprobacion
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'ManoDeObra' %}" class="nav-link text-white">
+                      <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                      Mano de Obra
+                    </a>
+                  </li>
+                <li>
+                  <a href="{% url 'Inventario' %}" class="nav-link text-white">
+                    <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                    Inventarios
+                  </a>
+                </li> 
+                  <li>
+                    <a href="{% url 'Cierrecontable' %}" class="nav-link text-white">
+                      <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                      Cierre Contable
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="{% url 'Costeo' %}" class="nav-link text-white">
+                      <svg class="bi d-block mx-auto mb-1" width="24" height="24"></svg>
+                      Costeo
+                    </a>
+                  </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        <div class="px-3 py-2 border-bottom mb-3">
+          <div class="container d-flex flex-wrap justify-content-center">
+            <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto">
+              <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+            </form>
+            
+            
+            <div class="text-end">
+              <button type="button" class="btn btn-light text-dark me-2">Login</button>
+              <button type="button" class="btn btn-primary">Sign-up</button>
+            </div>
+          </div>
+        </div>
+        -->
+      </header>
+
+    {% block content %}
+
+
+    {% endblock %}
+
+      
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

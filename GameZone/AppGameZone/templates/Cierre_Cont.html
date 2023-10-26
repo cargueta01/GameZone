@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+
+<body>
+
+    <div class="container"><br><br><br>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+            <h2 style="text-align: center;">Cierre Contable de GameZone S.A de C.V</h2><br><br>
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="row">
+                <div class="col-md-6">
+                    <select class="form-select" name="libroSeleccionado" required>
+                        {% for l in libros %}
+                        <option value={{l.idLibro}}>{{l.nombreLibro}} <p> -> </p> {{l.fechaDeApertura}} <p> -- </p>
+                            {{l.fechaDeCierre}} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Mostrar cierre del libro</button>
+                </div>
+            </div>
+            </form><br><br>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center; background-color: burlywood;">Cierre contable {{titulo.nombreLibro}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ventas netas</td>
+                            <td>{{ventas_netas}}</td>
+                        </tr>
+                        <tr>
+                            <td>Compras netas</td>
+                            <td>{{compras_netas}}</td>
+                        </tr>
+                        <tr>
+                            <td>Compras totales</td>
+                            <td>{{compras_totales}}</td>
+                        </tr>
+                        <tr>
+                            <td>Mercancias disponibles</td>
+                            <td>{{mercancias_disponibles}}</td>
+                        </tr>
+                        <tr>
+                            <td>Costos de ventas</td>
+                            <td>{{costo_de_ventas}}</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div><br><br>
+</body>
+{% endblock %}

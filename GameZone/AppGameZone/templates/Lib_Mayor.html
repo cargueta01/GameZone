@@ -1,0 +1,692 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+        }
+    }
+</style>
+
+<body>
+    <div class="container-fluid"><br><br><br>
+        <div class="row g-3">
+            <div class="col-md-3"></div>
+            <div class="col-md-4">
+                <h1 class="col-mb-3" style="text-align: center;">Libro Mayor {{titulo.nombreLibro}}</h2><br>
+            </div>
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="libroSeleccionado" required>
+                            {% for l in libros %}
+                            <option value={{l.idLibro}}>{{l.nombreLibro}} <p> -> </p> {{l.fechaDeApertura}} <p> -- </p>
+                                {{l.fechaDeCierre}} </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Mostrar Libro Mayor</button><br><br><br>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="row" style="padding-left: 3rem;">
+            <div class="col-md-2" style="background-color: cornflowerblue;"><br><br>
+                <h3 style="text-align: center;"><b>Activos</b></h3>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Caja</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Caja' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{ cuenta.montoTransaccion }}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{ cuenta.montoTransaccion }}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Caja }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Inventario</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Inventario' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{ cuenta.montoTransaccion }}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{ cuenta.montoTransaccion }}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Inventario }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">IVA Credito Fiscal</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'IVA crédito fiscal' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.IVA_crédito_fiscal }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><br><br><br>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Mobiliario</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Mobiliario' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Mobiliario }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Pago Anticipado de Local</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Pago anticipado de local' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Pago_anticipado_de_local }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Equipo de Cómputo</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Equipo de computo' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Equipo_de_computo }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><br>
+            </div>
+        </div><br><br><br>
+
+        <div class="row" style="padding-left: 3rem;">
+            <div class="col-md-2" style="background-color:chocolate;"><br><br>
+                <h3 style="text-align: center;"><b>Pasivos</b></h3>
+            </div>
+            <div class="col-md-10">
+                <div class="col-md-3">
+                    <div class="table-responsive">
+                        <h3 style="text-align: center;">IVA Debito Fiscal</h3>
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="text-align: center;">Debe</th>
+                                    <th scope="col" style="text-align: center;">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cuenta in cuentas %}
+                                {% if cuenta.registroCatalogo.nombreDeCuenta == 'IVA débito fiscal' %}
+                                <tr>
+                                    {% if cuenta.tipoDeMonto == 'Debe' %}
+                                    <td>{{cuenta.montoTransaccion}}</td>
+                                    <td></td>
+                                    {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                    <td></td>
+                                    <td>{{cuenta.montoTransaccion}}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td style="background-color: coral;">{{ sumas.IVA_débito_fiscal }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><br><br><br>
+
+        <div class="row" style="padding-left: 3rem;">
+            <div class="col-md-2" style="background-color:darkolivegreen;"><br><br>
+                <h3 style="text-align: center;"><b>Capital</b></h3>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Capital Contable</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Capital contable' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td></td>
+                                        <td style="background-color: coral;">{{ sumas.Capital_contable }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><br><br><br>
+
+        <div class="row" style="padding-left: 3rem;">
+            <div class="col-md-2" style="background-color:darkslateblue;"><br><br>
+                <h3 style="text-align: center;"><b>Gastos y Costos</b></h3>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Compras</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Compras' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Compras }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Gastos de venta</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Gasto de venta' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Gasto_de_venta }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Descuentos sobre Ventas</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Descuento sobre venta' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Descuento_sobre_venta }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><br><br>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Devoluciones sobre ventas</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Devoluciones sobre venta' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Devoluciones_sobre_venta }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Pagos de Servicios Básicos</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Pago de servicios básicos' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Pago_de_servicios_básicos }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Pago de empleados</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Pago de empleados' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Pago_de_empleados }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><br><br>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Gastos sobre compras</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == '' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td style="background-color: coral;">{{ sumas.Gastos_sobre_compras }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><br><br><br>
+
+        <div class="row" style="padding-left: 3rem;">
+            <div class="col-md-2" style="background-color:firebrick;"><br><br>
+                <h3 style="text-align: center;"><b>Ingresos</b></h3>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Devoluciones sobre compras</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Devoluciones sobre compra' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td></td>
+                                        <td style="background-color: coral;">{{ sumas.Devoluciones_sobre_compra }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Descuentos sobre compras</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Descuento sobre compra' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td></td>
+                                        <td style="background-color: coral;">{{ sumas.Descuento_sobre_compra }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="table-responsive">
+                            <h3 style="text-align: center;">Ventas</h3>
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="text-align: center;">Debe</th>
+                                        <th scope="col" style="text-align: center;">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cuenta in cuentas %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Ventas' %}
+                                    <tr>
+                                        {% if cuenta.tipoDeMonto == 'Debe' %}
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        <td></td>
+                                        {% elif cuenta.tipoDeMonto == 'Haber' %}
+                                        <td></td>
+                                        <td>{{cuenta.montoTransaccion}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td></td>
+                                        <td style="background-color: coral;">{{ sumas.Ventas }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div><br><br><br>
+
+    </div><br><br><br>
+
+</body>
+
+{% endblock %}
