@@ -31,3 +31,7 @@ venv/
 # Archivos temporales
 *.swp
 .DS_Store
+
+#setting.py de la carpeta GameZone
+GameZone/settings.py
+```

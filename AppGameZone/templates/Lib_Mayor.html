@@ -551,7 +551,7 @@
                                 </thead>
                                 <tbody>
                                     {% for cuenta in cuentas %}
-                                    {% if cuenta.registroCatalogo.nombreDeCuenta == '' %}
+                                    {% if cuenta.registroCatalogo.nombreDeCuenta == 'Gastos sobre compras' %}
                                     <tr>
                                         {% if cuenta.tipoDeMonto == 'Debe' %}
                                         <td>{{cuenta.montoTransaccion}}</td>
