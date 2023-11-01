@@ -308,18 +308,19 @@ def Inventario_a(request):
                                           cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
                                           descripcionInventario=descripcion, residuo = cantidadMaterial,
                                           montoValor = (precioUnitario*cantidadMaterial), saldoValor = (cantidadMaterial*precioUnitario))
-    entradaTotal = 0
-    salidaTotal = 0
-    saldoTotal = 0   
-    inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
-    for i in inventario:
-        if i.tipoDeMovimiento == 'Entrada':
-            entradaTotal += i.saldoValor
-            saldoTotal += i.residuo*i.costoUnitario
-        elif i.tipoDeMovimiento == 'Salida':
-            salidaTotal += i.montoValor
-    return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
-                                              'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
+    else:
+        entradaTotal = 0
+        salidaTotal = 0
+        saldoTotal = 0   
+        inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
+        for i in inventario:
+            if i.tipoDeMovimiento == 'Entrada':
+                entradaTotal += i.saldoValor
+                saldoTotal += i.residuo*i.costoUnitario
+            elif i.tipoDeMovimiento == 'Salida':
+                salidaTotal += i.montoValor
+        return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
+                                                'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
 
 def costeo(request):
 
