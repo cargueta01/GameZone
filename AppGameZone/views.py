@@ -309,24 +309,21 @@ def Inventario_a(request):
                                               cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
                                               descripcionInventario=descripcion, residuo = cantidadMaterial,
                                               montoValor = (precioUnitario*cantidadMaterial), saldoValor = (cantidadMaterial*precioUnitario))
-            inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
-            return render(request, "Inventario.html",{'inventario': inventario})
-        else:
-            entradaTotal = 0
-            salidaTotal = 0
-            saldoTotal = 0   
-            inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
-            for i in inventario:
-                if i.tipoDeMovimiento == 'Entrada':
-                    if i.saldoValor is not None:
-                        entradaTotal += i.saldoValor
-                    if i.residuo is not None and i.costoUnitario is not None:
-                        saldoTotal += i.residuo * i.costoUnitario
-                elif i.tipoDeMovimiento == 'Salida':
-                    if i.montoValor is not None:
-                        salidaTotal += i.montoValor
-            return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
-                                                    'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
+        entradaTotal = 0
+        salidaTotal = 0
+        saldoTotal = 0   
+        inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
+        for i in inventario:
+            if i.tipoDeMovimiento == 'Entrada':
+                if i.saldoValor is not None:
+                    entradaTotal += i.saldoValor
+                if i.residuo is not None and i.costoUnitario is not None:
+                    saldoTotal += i.residuo * i.costoUnitario
+            elif i.tipoDeMovimiento == 'Salida':
+                if i.montoValor is not None:
+                    salidaTotal += i.montoValor
+        return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
+                                                'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
     except Exception as e:
         print((f"\neste es el error {e}\n"))
         return render(request, "Inventario.html")
