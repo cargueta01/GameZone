@@ -5,6 +5,7 @@
 __pycache__/
 db.sqlite3
 identifier.sqlite
+.gitignore/
 
 
 # Ambiente virtual (por ejemplo, si usas virtualenv o venv)
@@ -33,5 +34,5 @@ venv/
 .DS_Store
 
 #setting.py de la carpeta GameZone
-GameZone/settings.py
+GameZone/settings.py/
 ```
