@@ -261,12 +261,6 @@ def Inventario_a(request):
         precioUnitario = request.POST.get('precioUnitario')
         descripcion = request.POST.get('descripcion')
 
-        #si el precio unitario no es verdadero, se le asigna None
-        #if precioUnitario == '' or not precioUnitario:
-        #    precioUnitario = None
-
-        #codigo para aplicar metodo de inventario UEPS guardando en la base de datos los movimientos anteriores
-        
         entradas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by("fechaDeMovimiento")
         entradas = entradas.reverse()
         #print(f"esta es la cantidad de material {cantidadMaterial} y esta la cantidad de producto {entradas[1].residuo}" )
@@ -317,7 +311,7 @@ def Inventario_a(request):
     entradaTotal = 0
     salidaTotal = 0
     saldoTotal = 0   
-    inventario = Inventario.objects.all()
+    inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
     for i in inventario:
         if i.tipoDeMovimiento == 'Entrada':
             entradaTotal += i.saldoValor

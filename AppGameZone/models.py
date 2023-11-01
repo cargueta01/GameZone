@@ -46,4 +46,7 @@ class Inventario(models.Model):
     cantidadProducto = models.IntegerField(null=True, blank=True)
     costoUnitario = models.FloatField(null=True, blank=True)
     descripcionInventario = models.TextField(null=True, blank=True)
+    residuo = models.FloatField(null=True, blank=True)
+    montoValor = models.FloatField(null=True, blank=True)
+    saldoValor = models.FloatField(null=True, blank=True)
 
