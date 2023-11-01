@@ -254,63 +254,79 @@ def manodeobra(request):
     return render(request, "Mano_Obra.html")
 
 def Inventario_a(request):
-    if request.method == 'POST':
-        try:
+    try:
+        if request.method == 'POST':
             fechaMovimiento = request.POST.get('fechaMovimiento')
             tipoMovimiento = request.POST.get('tipoMovimiento')
             cantidadMaterial = int(request.POST.get('cantidadMaterial'))
             precioUnitario = request.POST.get('precioUnitario')
             descripcion = request.POST.get('descripcion')
-            
-            if tipoMovimiento == 'Salida':
-                entradas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by("-fechaDeMovimiento")
+
+            entradas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by("fechaDeMovimiento")
+            entradas = entradas.reverse()
+            #print(f"esta es la cantidad de material {cantidadMaterial} y esta la cantidad de producto {entradas[1].residuo}" )
+            if len(entradas) > 0 and tipoMovimiento == 'Salida':
                 for a in entradas:
+                    #supon que la cantidadMaterial es 590
+                    #print("estas son las salidas: " + str(a.cantidadProducto))
+
                     if cantidadMaterial == a.residuo:
-                        a.residuo = 0
+                        residuo = 0
+                        a.residuo = 0   
                         a.save()
-                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento=tipoMovimiento,
-                                                  cantidadProducto=cantidadMaterial, costoUnitario=a.costoUnitario,
-                                                  descripcionInventario=descripcion, residuo=0,
-                                                  montoValor=a.costoUnitario*cantidadMaterial, saldoValor=0)
+                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                                cantidadProducto=cantidadMaterial, costoUnitario= a.costoUnitario,
+                                                descripcionInventario=descripcion, residuo = residuo,
+                                                montoValor = (a.costoUnitario*cantidadMaterial), saldoValor = residuo*a.costoUnitario)
+                        print(f"la cantidad de material es igual a la cantidad de producto {cantidadMaterial} == {a.cantidadProducto}")
                         break
+                    
                     elif cantidadMaterial > a.residuo and a.residuo > 0:
                         residuo = cantidadMaterial - a.residuo
+
+                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                                cantidadProducto=(cantidadMaterial-residuo), costoUnitario= a.costoUnitario,
+                                                descripcionInventario=descripcion, residuo = 0, 
+                                                montoValor = (a.costoUnitario*(cantidadMaterial-residuo)), saldoValor = 0)
+                        cantidadMaterial = residuo
                         a.residuo = 0
                         a.save()
-                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento=tipoMovimiento,
-                                                  cantidadProducto=residuo, costoUnitario=a.costoUnitario,
-                                                  descripcionInventario=descripcion, residuo=0,
-                                                  montoValor=a.costoUnitario*residuo, saldoValor=0)
-                        cantidadMaterial = residuo
                         continue
-                    elif cantidadMaterial < a.residuo and a.residuo > 0:
+                    elif cantidadMaterial < a.residuo and a.residuo > 0: 
                         residuo = a.residuo - cantidadMaterial
                         a.residuo = residuo
                         a.save()
-                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento=tipoMovimiento,
-                                                  cantidadProducto=cantidadMaterial, costoUnitario=a.costoUnitario,
-                                                  descripcionInventario=descripcion, residuo=residuo,
-                                                  montoValor=a.costoUnitario*cantidadMaterial, saldoValor=residuo*a.costoUnitario)
+                        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                                cantidadProducto=cantidadMaterial, costoUnitario= a.costoUnitario,
+                                                descripcionInventario=descripcion, residuo = residuo,
+                                                montoValor = (a.costoUnitario*cantidadMaterial), saldoValor = residuo*a.costoUnitario)
                         break
-            elif tipoMovimiento == 'Entrada':
-                if precioUnitario:
+            elif tipoMovimiento == 'Entrada':    
+                if precioUnitario != '':
                     precioUnitario = float(precioUnitario)
-                    Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento=tipoMovimiento,
+                    #crear aqui objeto de entrada
+                    Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
                                               cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
-                                              descripcionInventario=descripcion, residuo=cantidadMaterial,
-                                              montoValor=precioUnitario*cantidadMaterial, saldoValor=cantidadMaterial*precioUnitario)
-            
-        except Exception as e:
-            print("dio este error: " + str(e))
-
-    inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
-    entradaTotal = sum(i.saldoValor for i in inventario if i.tipoDeMovimiento == 'Entrada')
-    salidaTotal = sum(i.montoValor for i in inventario if i.tipoDeMovimiento == 'Salida')
-    saldoTotal = sum(i.residuo*i.costoUnitario for i in inventario if i.tipoDeMovimiento == 'Entrada')
-    
-    return render(request, "Inventario.html", {'inventario': inventario, 'entradaTotal': entradaTotal, 
-                                               'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
-
+                                              descripcionInventario=descripcion, residuo = cantidadMaterial,
+                                              montoValor = (precioUnitario*cantidadMaterial), saldoValor = (cantidadMaterial*precioUnitario))
+            inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
+            return render(request, "Inventario.html",{'inventario': inventario})
+        else:
+            entradaTotal = 0
+            salidaTotal = 0
+            saldoTotal = 0   
+            inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
+            for i in inventario:
+                if i.tipoDeMovimiento == 'Entrada':
+                    entradaTotal += i.saldoValor
+                    saldoTotal += i.residuo*i.costoUnitario
+                elif i.tipoDeMovimiento == 'Salida':
+                    salidaTotal += i.montoValor
+            return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
+                                                    'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
+    except Exception as e:
+        print((f"\neste es el error {e}\n"))
+        return render(request, "Inventario.html")
 
 def costeo(request):
 
