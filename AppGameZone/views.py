@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario
+from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable
 
 
 # cuentas que existen segun su categoria en el catalogo de cuentas
@@ -20,7 +20,6 @@ catalogo = {
     'Ingresos': {'5101': 'Devoluciones sobre compra', '5102': 'Descuento sobre compra', '5103': 'Ventas'}
 }
 
-
 def buscar_clave_por_valor(diccionario, valor_buscar):
     for elemento, sub_diccionario in diccionario.items():
         for clave, valor in sub_diccionario.items():
@@ -28,16 +27,11 @@ def buscar_clave_por_valor(diccionario, valor_buscar):
                 return clave
     return None
 
-
 def inicio(request):
     return render(request, 'home.html')
-# Create your views here.
-
 
 def Catalogo_Cuenta(request):
-
     return render(request, "Cat_Cuentas.html")
-
 
 def transaccion(request):
 
@@ -67,7 +61,6 @@ def transaccion(request):
                                                     'libros': libros, 'mensaje': mensaje}
                   )
 
-
 def formlibromayor(request):
     if request.method == 'POST':
         nombreLibro = request.POST.get('nombreLibro')
@@ -77,7 +70,6 @@ def formlibromayor(request):
             nombreLibro=nombreLibro, fechaDeApertura=fechaApertura, fechaDeCierre=fechaCierre)
         print("\nse creo el libro mayor\n")
     return render(request, "Form_LibroMayor.html")
-
 
 def libromayor(request):
     # cuentas y sumas inicializadas en null
@@ -129,7 +121,6 @@ def libromayor(request):
 
     return render(request, "Lib_Mayor.html", {'cuentas': cuentas, 'sumas': sumas, 'libros': libros,
                                               'titulo': libroTitulo})
-
 def balance(request):
     debeTotal = 0
     haberTotal = 0
@@ -175,36 +166,25 @@ def balance(request):
     print("estos son los debe y haber totales:\n" + str(debeTotal) + " " + str(haberTotal))
     return render(request, "Bal_Comprob.html", {'sumas': sumas, 'libros': libros, 'titulo': libroTitulo,
                                                 'debeTotal': debeTotal, 'haberTotal': haberTotal})
-
 def cierrecontable(request):
     cuentas = None
     sumas = None
     libroSeleccionado = None
-    # todas las nombreDeCuenta de la clase CatalogoCuenta
-    # lista = CatalogoCuenta.objects.values_list('nombreDeCuenta', flat=True)
-
     # buscar en RegistroTransaccion por registroLibro
     cuentas = RegistroTransaccion.objects.filter(registroLibro=1)
-
     # consultar todos los libros mayores
     libros = LibroMayor.objects.all()
     libroTitulo = None
     if request.method == 'POST':
         libroSeleccionado = request.POST.get('libroSeleccionado')
         print("este es el el id: " + str(libroSeleccionado))
-        cuentas = RegistroTransaccion.objects.filter(
-            registroLibro=libroSeleccionado)
-
+        cuentas = RegistroTransaccion.objects.filter(registroLibro=libroSeleccionado)
         libroTitulo = LibroMayor.objects.get(idLibro=libroSeleccionado)
-
     # diccionario con sumas
     sumas = {}
     tipos = ['Activo', 'Pasivo', 'Capital', 'Gastos', 'Ingresos']
     for i in tipos:
-        # estos son los nombres de las cuentas
         lista = list(catalogo[i].values())
-        # print("esto es ")
-        # print(lista)
         for j in lista:
             debe = 0
             haber = 0
@@ -214,12 +194,10 @@ def cierrecontable(request):
                         debe += c.montoTransaccion
                     elif c.tipoDeMonto == 'Haber':
                         haber += c.montoTransaccion
-            new_key = j.replace(' ', '_')
             if i == 'Activo' or i == 'Gastos':
-                sumas[j] = abs(debe - haber)
-                # print("esta es la lista: "+ str(j)+" y su debe : "+str(sumas[new_key]))
+                sumas[j] = debe - haber
             else:
-                sumas[j] = abs(haber - debe)
+                sumas[j] = haber - debe
     
     contador = 0
     inventarioInicial = 0
@@ -229,10 +207,6 @@ def cierrecontable(request):
             print("este es el inventario: " + str(i.montoTransaccion))
             inventarioInicial = i.montoTransaccion
             contador += 1
-        else:
-            inventarioInicial = 0
-
-    print("esta es mi busqueda: " + str(inventarioInicial))
 
     ventas_netas = sumas['Ventas'] - sumas['Devoluciones sobre venta'] - sumas['Descuento sobre venta']
 
@@ -250,35 +224,82 @@ def cierrecontable(request):
                             'titulo': libroTitulo})
 
 def manodeobra(request):
-
     return render(request, "Mano_Obra.html")
 
 def Inventario_a(request):
-    inventario = Inventario.objects.all().order_by('fechaDeMovimiento')
+    
     if request.method == 'POST':
         fechaMovimiento = request.POST.get('fechaMovimiento')
         tipoMovimiento = request.POST.get('tipoMovimiento')
-        cantidadMaterial = request.POST.get('cantidadMaterial')
+        cantidadMaterial = int(request.POST.get('cantidadMaterial'))
         precioUnitario = request.POST.get('precioUnitario')
         descripcion = request.POST.get('descripcion')
 
-        Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
-                                  cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
-                                  descripcionInventario=descripcion)
+        #si el precio unitario no es verdadero, se le asigna None
+        #if precioUnitario == '' or not precioUnitario:
+        #    precioUnitario = None
+
         #codigo para aplicar metodo de inventario UEPS guardando en la base de datos los movimientos anteriores
         
-        #salidas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by('fechaDeMovimiento')
-        #entradas = Inventario.objects.filter(tipoDeMovimiento='Salida').order_by('fechaDeMovimiento')
+        entradas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by("fechaDeMovimiento")
+        entradas = entradas.reverse()
+        #print(f"esta es la cantidad de material {cantidadMaterial} y esta la cantidad de producto {entradas[1].residuo}" )
+        if len(entradas) > 0 and tipoMovimiento == 'Salida':
+            for a in entradas:
+                #supon que la cantidadMaterial es 590
+                #print("estas son las salidas: " + str(a.cantidadProducto))
 
-        #consultar inventario de la base de datos y ordenar en orden ascendente por fecha de movimiento
-    
-    #print("este es el inventario: " + str(inventario))    
-    movimientos={}
-    #recorrer el inventario y guardar en un diccionario los tipoMovimiento, cantidadMaterial y precioUnitario
+                if cantidadMaterial == a.residuo:
+                    residuo = 0
+                    a.residuo = 0   
+                    a.save()
+                    Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                            cantidadProducto=cantidadMaterial, costoUnitario= a.costoUnitario,
+                                            descripcionInventario=descripcion, residuo = residuo,
+                                            montoValor = (a.costoUnitario*cantidadMaterial), saldoValor = residuo*a.costoUnitario)
+                    print(f"la cantidad de material es igual a la cantidad de producto {cantidadMaterial} == {a.cantidadProducto}")
+                    break
+ 
+                elif cantidadMaterial > a.residuo and a.residuo > 0:
+                    residuo = cantidadMaterial - a.residuo
+                    
+                    Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                            cantidadProducto=(cantidadMaterial-residuo), costoUnitario= a.costoUnitario,
+                                            descripcionInventario=descripcion, residuo = 0, 
+                                            montoValor = (a.costoUnitario*(cantidadMaterial-residuo)), saldoValor = 0)
+                    cantidadMaterial = residuo
+                    a.residuo = 0
+                    a.save()
+                    continue
+                elif cantidadMaterial < a.residuo and a.residuo > 0: 
+                    residuo = a.residuo - cantidadMaterial
+                    a.residuo = residuo
+                    a.save()
+                    Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                            cantidadProducto=cantidadMaterial, costoUnitario= a.costoUnitario,
+                                            descripcionInventario=descripcion, residuo = residuo,
+                                            montoValor = (a.costoUnitario*cantidadMaterial), saldoValor = residuo*a.costoUnitario)
+                    break
+        elif tipoMovimiento == 'Entrada':    
+            if precioUnitario != '':
+                precioUnitario = float(precioUnitario)
+                #crear aqui objeto de entrada
+                Inventario.objects.create(fechaDeMovimiento=fechaMovimiento, tipoDeMovimiento =tipoMovimiento,
+                                          cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
+                                          descripcionInventario=descripcion, residuo = cantidadMaterial,
+                                          montoValor = (precioUnitario*cantidadMaterial), saldoValor = (cantidadMaterial*precioUnitario))
+    entradaTotal = 0
+    salidaTotal = 0
+    saldoTotal = 0   
+    inventario = Inventario.objects.all()
     for i in inventario:
-        movimientos[i.tipoDeMovimiento] = [i.fechaDeMovimiento, i.descripcionInventario, i.cantidadProducto, i.costoUnitario,i.cantidadProducto* i.costoUnitario ]
-    print("este es el movimiento: " + str(movimientos))
-    return render(request, "Inventario.html",{'inventario': inventario, 'movimientos': movimientos})
+        if i.tipoDeMovimiento == 'Entrada':
+            entradaTotal += i.saldoValor
+            saldoTotal += i.saldoValor
+        elif i.tipoDeMovimiento == 'Salida':
+            salidaTotal += i.saldoValor
+    return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
+                                              'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
 
 def costeo(request):
 

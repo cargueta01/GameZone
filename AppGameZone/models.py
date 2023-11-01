@@ -36,9 +36,7 @@ class CierreContable(models.Model):
     comprasTotales = models.FloatField(null=True, blank=True)
     mercanciasDisponibles = models.FloatField(null=True, blank=True)
     costoDeVentas = models.FloatField(null=True, blank=True)
-
-
-
+    
 class Inventario(models.Model):
     idInventario = models.AutoField(primary_key=True)
     fechaDeMovimiento = models.DateField()
@@ -46,4 +44,7 @@ class Inventario(models.Model):
     cantidadProducto = models.IntegerField(null=True, blank=True)
     costoUnitario = models.FloatField(null=True, blank=True)
     descripcionInventario = models.TextField(null=True, blank=True)
+    residuo = models.FloatField(null=True, blank=True)
+    montoValor = models.FloatField(null=True, blank=True)
+    saldoValor = models.FloatField(null=True, blank=True)
 
