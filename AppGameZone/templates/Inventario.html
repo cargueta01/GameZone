@@ -51,8 +51,8 @@
 
           <div class="col-md-12">
             <label class="form-label">Precio Unitario del Material</label>
-            <input type="number" class="form-control" name="precioUnitario" >
-            
+            <input type="number" class="form-control" name="precioUnitario">
+
           </div><br>
         </div><br>
 
@@ -77,7 +77,7 @@
           </div>
         </div>
       </form>
-    </div><br><br><br><br><br>
+    </div><br><br>
 
     <div class="row g-3">
       <h2 style="text-align: center;">Tabla de Registro de Inventario</h2>
@@ -107,26 +107,61 @@
               <td>Precio Unitario</td>
               <td>Monto Total</td>
             </tr>
+            {% for i in inventario %}
+
             <tr style="text-align: center;">
-              
               <!--Aqui va la fecha-->
-              <td>17/08/2023</td>
-              <td>prueba</td>
+              <td>{{i.fechaDeMovimiento}}</td>
+              <td>{{i.descripcionInventario}}</td>
 
+              {% if i.tipoDeMovimiento == 'Entrada' %}
               <!--Aqui van los datos de las entradas-->
-              <td>10</td>
-              <td>1.50</td>
-              <td>15</td>
-
+              <td>{{ i.cantidadProducto }}</td>
+              <td>{{ i.costoUnitario }}</td>
+              <td>{{i.montoValor}}</td>
               <!--Aqui van los datos de las salidas-->
-              <td>20</td>
-              <td>1.60</td>
-              <td>32</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <!--Aqui van los datos de las saldos-->
+              <td>{{ i.cantidadProducto }}</td>
+              <td>{{ i.costoUnitario }}</td>
+              <td>{{i.saldoValor}}</td>
 
-              <!--Aqui van los datos del saldo-->
-              <td>15</td>
-              <td>1.30</td>
-              <td>19.5</td>
+              {% elif i.tipoDeMovimiento == 'Salida' %}
+              <!--Aqui van los datos de las entradas-->
+              <td></td>
+              <td></td>
+              <td></td>
+              <!--Aqui van los datos de las salidas-->
+              <td>{{ i.cantidadProducto }}</td>
+              <td>{{ i.costoUnitario }}</td>
+              <td>{{i.montoValor}}</td>
+              <!--Aqui van los datos de las saldos-->
+              {% if i.residuo == 0 %}
+              <td>{{ i.residuo }}</td>
+              <td>{{ i.residuo }}</td>
+              <td>{{ i.residuo }}</td>
+              {% else %}
+              <td>{{ i.residuo }}</td>
+              <td>{{ i.costoUnitario }}</td>
+              <td>{{i.saldoValor}}</td>
+              {% endif %}
+              {% endif %}
+            </tr>
+            {% endfor %}
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>{{entradaTotal}}</td>
+              <td></td>
+              <td></td>
+              <td>{{salidaTotal}}</td>
+              <td></td>
+              <td></td>
+              <td>{{saldoTotal}}</td>
             </tr>
           </tbody>
         </table>
