@@ -295,9 +295,9 @@ def Inventario_a(request):
     for i in inventario:
         if i.tipoDeMovimiento == 'Entrada':
             entradaTotal += i.saldoValor
-            saldoTotal += i.saldoValor
+            saldoTotal += i.residuo*i.costoUnitario
         elif i.tipoDeMovimiento == 'Salida':
-            salidaTotal += i.saldoValor
+            salidaTotal += i.montoValor
     return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
                                               'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
 
