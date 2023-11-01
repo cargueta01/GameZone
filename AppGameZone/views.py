@@ -318,10 +318,13 @@ def Inventario_a(request):
             inventario = Inventario.objects.all().order_by("fechaDeMovimiento")
             for i in inventario:
                 if i.tipoDeMovimiento == 'Entrada':
-                    entradaTotal += i.saldoValor
-                    saldoTotal += i.residuo*i.costoUnitario
+                    if i.saldoValor is not None:
+                        entradaTotal += i.saldoValor
+                    if i.residuo is not None and i.costoUnitario is not None:
+                        saldoTotal += i.residuo * i.costoUnitario
                 elif i.tipoDeMovimiento == 'Salida':
-                    salidaTotal += i.montoValor
+                    if i.montoValor is not None:
+                        salidaTotal += i.montoValor
             return render(request, "Inventario.html",{'inventario': inventario, 'entradaTotal': entradaTotal, 
                                                     'salidaTotal': salidaTotal, 'saldoTotal': saldoTotal})
     except Exception as e:
