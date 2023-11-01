@@ -254,7 +254,9 @@ def manodeobra(request):
     return render(request, "Mano_Obra.html")
 
 def Inventario_a(request):
-    """if request.method == 'POST':
+
+    inventario = Inventario.objects.all()
+    if request.method == 'POST':
         fechaMovimiento = request.POST.get('fechaMovimiento')
         tipoMovimiento = request.POST.get('tipoMovimiento')
         cantidadMaterial = int(request.POST.get('cantidadMaterial'))
@@ -308,11 +310,10 @@ def Inventario_a(request):
                                           cantidadProducto=cantidadMaterial, costoUnitario=precioUnitario,
                                           descripcionInventario=descripcion, residuo = cantidadMaterial,
                                           montoValor = (precioUnitario*cantidadMaterial), saldoValor = (cantidadMaterial*precioUnitario))
-    """
+    
     entradaTotal = 0
     salidaTotal = 0
     saldoTotal = 0   
-    inventario = Inventario.objects.all()
     for i in inventario:
         if i.tipoDeMovimiento == 'Entrada':
             entradaTotal += i.saldoValor
