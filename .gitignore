@@ -34,5 +34,7 @@ venv/
 .DS_Store
 
 #setting.py de la carpeta GameZone
-GameZone/settings.py/
+GameZone/settings.py
+GameZone/__pycache__
+AppGameZone/__pycache__
 ```
