@@ -36,9 +36,7 @@ class CierreContable(models.Model):
     comprasTotales = models.FloatField(null=True, blank=True)
     mercanciasDisponibles = models.FloatField(null=True, blank=True)
     costoDeVentas = models.FloatField(null=True, blank=True)
-
-
-
+    
 class Inventario(models.Model):
     idInventario = models.AutoField(primary_key=True)
     fechaDeMovimiento = models.DateField()

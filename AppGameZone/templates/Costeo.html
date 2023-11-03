@@ -56,7 +56,7 @@
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Tasa de CIF</label>
-                        <input type="number" class="form-control" name="" required>
+                        <input type="number" class="form-control" name="" >
                         <div class="invalid-feedback">
                             Digite el porcentaje de cif
                         </div>
@@ -83,15 +83,15 @@
                 <table class="table table-striped table-sm">
                     <thead>
                         <tr>
-                            <th colspan="2" style="text-align: center; background-color:cadetblue">Costeo</th>
+                            <th colspan="2" style="text-align: center; background-color:cadetblue"> <button style="text-align: center; background-color:cadetblue" class="btn">Costeo</button> </th>
                         </tr>
                     </thead>
-                    <tbody> 
+                    <tbody>
                         <tr>
                             <td>Total materia prima</td>
                             <td>valor</td>
                         </tr>
-                        <tr >
+                        <tr>
                             <td>Total mano de obra directa</td>
                             <td>valor</td>
                         </tr>
@@ -125,6 +125,7 @@
         </div>
 
     </div>
+    <script src="../static/bootstrap/js/form-validation.js"></script>
 </body>
 
 {% endblock %}
