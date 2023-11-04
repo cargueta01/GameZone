@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable
+from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable, ManoObra
 
 
 # cuentas que existen segun su categoria en el catalogo de cuentas
@@ -224,11 +224,41 @@ def cierrecontable(request):
                             'titulo': libroTitulo})
 
 def manodeobra(request):
+    diaSeptimo = 0
+    vacaciones = 0
+    aguinaldo = 0
+    ISSS = 0
+    AFP = 0
+    salarioReal = 0
+    factorRecargoEficiencia = 0
+    if request.method == 'POST':
+        salarioNominal = float(request.POST.get('salarioNominal'))
+        horasTrabajo = float(request.POST.get('horasTrabajo'))
+        diasTrabajo = float(request.POST.get('diasTrabajo'))
+        diasVacaciones = int(request.POST.get('diasVacaciones'))
+        recargoVacaciones = float(request.POST.get('recargoVacaciones'))
+        diasAguinaldo = int(request.POST.get('diasAguinaldo'))
+        porcentajeISSS = float(request.POST.get('porcentajeISSS'))
+        porcentajeAFP = float(request.POST.get('porcentajeAFP'))
+        porcentajeEficiencia = float(request.POST.get('porcentajeEficiencia'))
+        
+        diaSeptimo = salarioNominal*7
+        recargoVacaciones = recargoVacaciones/100
+        porcentajeEficiencia = porcentajeEficiencia/100
+        vacaciones = ((salarioNominal *diasVacaciones)+(recargoVacaciones*(salarioNominal*diasVacaciones)))/52
+        aguinaldo = (salarioNominal * diasAguinaldo)/52
+        ISSS = (diaSeptimo + vacaciones)*(porcentajeISSS/100)
+        AFP = (diaSeptimo + vacaciones)*(porcentajeAFP/100)
+        salarioReal = diaSeptimo + vacaciones + aguinaldo + ISSS + AFP
+        salarionNominalSemanal = diasTrabajo * salarioNominal
+        factorRecargoEficiencia = salarioReal/(salarionNominalSemanal*porcentajeEficiencia)
 
-    #if request.method == 'POST':
-
-
-    return render(request, "Mano_Obra.html")
+    
+    diccionario  = {'septimo' : round(diaSeptimo, 2), 'vacaciones' : round(vacaciones, 2), 'aguinaldo' : round(aguinaldo, 2), 'ISSS' : round(ISSS, 2), 
+                    'AFP' : round(AFP, 2), 'salarioReal' : round(salarioReal, 2), 'factorRecargoEficiencia' : round(factorRecargoEficiencia, 2)}
+    for i in diccionario:
+        print(f"este es el valor de {i} : {diccionario[i]}")
+    return render(request, "Mano_Obra.html", diccionario)
 
 def Inventario_a(request):
     try:
