@@ -2,10 +2,11 @@
 *.log
 *.pot
 *.pyc
-__pycache__/
+AppGameZone/__pycache__
+AppGameZone/migrations
 db.sqlite3
 identifier.sqlite
-.gitignore/
+.gitignore
 
 
 # Ambiente virtual (por ejemplo, si usas virtualenv o venv)

@@ -48,3 +48,14 @@ class Inventario(models.Model):
     montoValor = models.FloatField(null=True, blank=True)
     saldoValor = models.FloatField(null=True, blank=True)
 
+class ManoObra(models.Model):
+    idManoObra = models.AutoField(primary_key=True)
+    salarioNominal = models.FloatField(null=True, blank=True)
+    horasTrabajo = models.FloatField(null=True, blank=True)
+    diasTrabajo = models.FloatField(null=True, blank=True)
+    diasVacaciones = models.IntegerField(null=True, blank=True)
+    recargoVacaciones = models.FloatField(null=True, blank=True)
+    diasAguinaldo = models.IntegerField(null=True, blank=True)
+    porcentajeISSS = models.FloatField(null=True, blank=True)
+    porcentajeAFP = models.FloatField(null=True, blank=True)
+    porcentajeEficiencia = models.FloatField(null=True, blank=True)

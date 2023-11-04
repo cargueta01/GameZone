@@ -30,12 +30,12 @@
 
     <div class="container col-lg-8">
 
-      <form class="needs-validation">
+      <form class="needs-validation" enctype="multipart/form-data" method="post">
         {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-3">
             <label for="date" class="form-label">Salario Nominal</label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="salarioNominal" step="0.01" required>
             <div class="invalid-feedback">
               Digite el monto del salario nominal
             </div>
@@ -43,7 +43,7 @@
 
           <div class="col-md-4">
             <label class="form-label">Horas de trabajo</label>
-            <input type="number" name="" class="form-control" required>
+            <input type="number" name="horasTrabajo" class="form-control" step="0.01" required>
             <div class="invalid-feedback">
               Digite las horas de trabajo
             </div>
@@ -51,7 +51,7 @@
 
           <div class="col-md-3">
             <label class="form-label">Dias de trabajo</label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="diasTrabajo" step="0.01" required>
             <div class="invalid-feedback">
               Digite los dias de trabajo
             </div>
@@ -63,7 +63,7 @@
 
           <div class="col-md-3">
             <label class="form-label">Dias de Vacaciones</label>
-            <input type="number" name="" class="form-control" required>
+            <input type="number" name="diasVacaciones" class="form-control" step="0.01" required>
             <div class="invalid-feedback">
               Debe digitar el monto por seguro social
             </div>
@@ -71,7 +71,7 @@
 
           <div class="col-md-4">
             <label class="form-label"> Recargo de vacaciones </label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="recargoVacaciones" step="0.01" required>
             <div class="invalid-feedback">
               Escriba el monto por AFP
             </div>
@@ -79,7 +79,7 @@
 
           <div class="col-md-3">
             <label class="form-label"> Dias de Aguinaldo </label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="diasAguinaldo" step="0.01" required>
             <div class="invalid-feedback">
               Escriba los dias de aguinaldo
             </div>
@@ -89,7 +89,7 @@
         <div class="row g-3">
           <div class="col-md-3">
             <label class="form-label"> Porcentaje ISSS </label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="porcentajeISSS" step="0.01" required>
             <div class="invalid-feedback">
               Digite el porcentaje de ISSS
             </div>
@@ -97,7 +97,7 @@
 
           <div class="col-md-4">
             <label class="form-label"> Porcentaje de AFP </label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="porcentajeAFP" step="0.01" required>
             <div class="invalid-feedback">
               Digite el porcentaje de AFP
             </div>
@@ -105,13 +105,12 @@
 
           <div class="col-md-3">
             <label class="form-label"> Porcentaje de Eficiencia </label>
-            <input type="number" class="form-control" name="" required>
+            <input type="number" class="form-control" name="porcentajeEficiencia" step="0.01" required>
             <div class="invalid-feedback">
               Digite el porcentaje de eficiencia
             </div>
           </div>
         </div><br>
-
         <div class="row g-3">
           <div class="col-md-11">
             <hr class="my-4">
@@ -126,7 +125,6 @@
         </div>
       </form>
     </div>
-
     <div class="container">
       <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -139,31 +137,31 @@
           <tbody>
             <tr>
               <td>Septimo</td>
-              <td>valor</td>
+              <td>{{septimo}}</td>
             </tr>
             <tr>
               <td>Vacaciones</td>
-              <td>valor</td>
+              <td>{{vacaciones}}</td>
             </tr>
             <tr>
               <td>Aguinaldo</td>
-              <td>valor</td>
+              <td>{{aguinaldo}}</td>
             </tr>
             <tr>
               <td>ISSS</td>
-              <td>valor</td>
+              <td>{{ISSS}}</td>
             </tr>
             <tr>
               <td>AFP</td>
-              <td>valor</td>
+              <td>{{AFP}}</td>
             </tr>
             <tr>
               <td>Salario real</td>
-              <td>valor</td>
+              <td>{{salarioReal}}</td>
             </tr>
             <tr>
               <td>Factor de recargo</td>
-              <td>valor</td>
+              <td>{{factorRecargoEficiencia}}</td>
             </tr>
           </tbody>
         </table><br><br>
