@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable, ManoObra
+from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable, ManoObra, Costeo
+import json
 
 
 # cuentas que existen segun su categoria en el catalogo de cuentas
@@ -75,15 +76,13 @@ def libromayor(request):
     # cuentas y sumas inicializadas en null
     cuentas = None
     sumas = None
-    # todas las nombreDeCuenta de la clase CatalogoCuenta
-    # lista = CatalogoCuenta.objects.values_list('nombreDeCuenta', flat=True)
 
     # buscar en RegistroTransaccion por registroLibro
     cuentas = RegistroTransaccion.objects.filter(registroLibro=1)
 
     # consultar todos los libros mayores
     libros = LibroMayor.objects.all()
-    libroTitulo = None
+    libroTitulo = LibroMayor.objects.get(idLibro=1)
     if request.method == 'POST':
         libroSeleccionado = request.POST.get('libroSeleccionado')
         print("este es el el id: " + str(libroSeleccionado))
@@ -98,8 +97,6 @@ def libromayor(request):
     for i in tipos:
         # estos son los nombres de las cuentas
         lista = list(catalogo[i].values())
-        # print("esto es ")
-        # print(lista)
         for j in lista:
             debe = 0
             haber = 0
@@ -111,10 +108,18 @@ def libromayor(request):
                         haber += c.montoTransaccion
             new_key = j.replace(' ', '_')
             if i == 'Activo' or i == 'Gastos':
-                sumas[new_key] = abs(debe - haber)
+                operacion = debe - haber
+                if operacion < 0:
+                    sumas[new_key] = ["", abs(operacion)]
+                else:
+                    sumas[new_key] = [abs(operacion), ""]
                 # print("esta es la lista: "+ str(j)+" y su debe : "+str(sumas[new_key]))
             else:
-                sumas[new_key] = abs(haber - debe)
+                operacion = haber - debe
+                if operacion < 0:
+                    sumas[new_key] = [abs(operacion), ""]
+                else:
+                    sumas[new_key] = ["", abs(operacion)]
 
         # print("estos son los resultados:\n" + str(sumas))
         # print("\nesta es una cuenta:" + str(sumas['Inventario']))
@@ -152,12 +157,21 @@ def balance(request):
                             
                 new_key = j.replace(' ', '_')
                 if i == 'Activo' or i == 'Gastos':
-                    sumas[new_key] = abs(debe - haber)
-                    debeTotal += sumas[new_key]
-                    # print("esta es la lista: "+ str(j)+" y su debe : "+str(sumas[new_key]))
+                    operacion = debe - haber
+                    if operacion < 0:
+                        sumas[new_key] = ["", abs(operacion)]
+                        haberTotal += sumas[new_key][1]
+                    else:
+                        sumas[new_key] = [abs(operacion), ""]
+                        debeTotal += sumas[new_key][0]
                 else:
-                    sumas[new_key] = abs(haber - debe)
-                    haberTotal += sumas[new_key]
+                    operacion = haber - debe
+                    if operacion < 0:
+                        sumas[new_key] = [abs(operacion), ""]
+                        debeTotal += sumas[new_key][0]
+                    else:
+                        sumas[new_key] = ["", abs(operacion)]
+                        haberTotal += sumas[new_key][1]
                     
             libroTitulo = LibroMayor.objects.get(idLibro=libroSeleccionado)
             libroTitulo.saldoDeudor = debeTotal
@@ -333,6 +347,26 @@ def Inventario_a(request):
     except Exception as e:
         print((f"\neste es el error {e}\n"))
         return render(request, "Inventario.html")
-def costeo(request):
 
-    return render(request, "Costeo.html")
+
+def costeo(request):
+    if request.method == 'POST':
+        materiaPrima = float(request.POST.get('materiaPrima'))
+        costoMateriaPrima = float(request.POST.get('costoMateriaPrima'))
+        manoDeObra = float(request.POST.get('manoDeObra'))
+        costoManoDeObra = float(request.POST.get('costoManoDeObra'))
+        tasaCIF = request.POST.get('tasaCIF')
+
+        if tasaCIF != '':
+            tasaCIF = float(tasaCIF)
+        else:
+            tasaCIF = 0
+
+        Costeo.objects.create(materiaPrima=materiaPrima, costoMateriaPrima=costoMateriaPrima,
+                              manoDeObra=manoDeObra, costoManoDeObra=costoManoDeObra, tasaCIF=tasaCIF)
+    
+    costeo = Costeo.objects.all()
+    costeo_serializado = json.dumps(list(costeo.values()))
+    print(costeo_serializado)
+    return render(request, "Costeo.html", {'costeo':costeo_serializado})
+

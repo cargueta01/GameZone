@@ -59,3 +59,11 @@ class ManoObra(models.Model):
     porcentajeISSS = models.FloatField(null=True, blank=True)
     porcentajeAFP = models.FloatField(null=True, blank=True)
     porcentajeEficiencia = models.FloatField(null=True, blank=True)
+
+class Costeo(models.Model):
+    idCosteo : models.AutoField(primary_key= True)
+    materiaPrima = models.FloatField(null=True, blank=True)
+    costoMateriaPrima = models.FloatField(null=True, blank=True)
+    manoDeObra = models.FloatField(null=True, blank=True)
+    costoManoDeObra = models.FloatField(null=True, blank=True)
+    tasaCIF = models.FloatField(null=True, blank=True)
