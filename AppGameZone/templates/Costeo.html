@@ -141,7 +141,6 @@
                 var totalManoDeObra = costeo.reduce(function (acc, item) {
                     return acc + (item.manoDeObra * item.costoManoDeObra);
                 }, 0);
-
                 var tasaCIF = costeo[0].tasaCIF / 100;
 
                 var totalFabicacion = totalManoDeObra * tasaCIF;
