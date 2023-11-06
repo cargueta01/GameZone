@@ -49,18 +49,16 @@
         <div class="row g-3">
           <div class="col-md-4">
             <label for="country" class="form-label">Tipo de Cuenta</label>
-            <select class="form-select" id="country" name="tipoDeCuenta" required>
-              <option value="Activo">Activo</option>
-              <option value="Pasivo">Pasivo</option>
-              <option value="Capital">Capital</option>
-              <option value="Ingresos">Ingresos</option>
-              <option value="Gastos">Gastos</option>
+            <select class="form-select" name="tipoDeCuenta" id="tipoDeCuenta" onchange="mostrarCuenta()" required>
+              {% for key, valor in catalogo.items %}
+              <option value="{{key}}"> {{ key }}</option>
+              {% endfor %}
             </select>
           </div>
 
           <div class="col-md-4">
             <label for="country" class="form-label">Cuenta</label>
-            <select class="form-select" id="country" name="cuenta" required>
+            <select class="form-select" name="cuenta" id="nombreCuenta" onchange="valor()" required>
               {% for key, valor in valorCuentas.items %}
               <option value="{{valor}}"> {{ key }} -> {{ valor }}</option>
               {% endfor %}
@@ -78,21 +76,27 @@
 
         <div class="row g-3">
           <div class="col-md-3">
+
             <label for="date" class="form-label">Fecha</label>
             <input type="date" class="form-control" id="fecha" name="fechaDeRegistro" required>
             <div class="invalid-feedback">
               Digite una fecha
             </div>
-
           </div>
-          <div class="col-md-3"> <br><br>
-            <font style="color: red;"> {{mensaje}}</font>
-          </div>
+          {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-dismissible alert-success col-md-3" id="mensaje">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong class="text-dark">{{message}}</strong>
+            </div>
+            {% endfor %}
+            {% endif %}
+          
         </div><br>
         <div class="col-md-12">
           <label for="address" class="form-label">Monto</label>
           <input type="number" name="montoTransaccion" class="form-control" id="address"
-            placeholder="Digite el monto de la transaccion" required>
+            placeholder="Digite el monto de la transaccion" step="0.01">
           <div class="invalid-feedback">
             Debe digitar un monto
           </div>
@@ -125,6 +129,38 @@
   </div>
 
   <script src="../static/bootstrap/js/form-validation.js"></script>
+  <script>
+    // Función para ocultar el div después de 5 segundos
+    setTimeout(function() {
+        var divParaOcultar = document.getElementById("mensaje");
+        divParaOcultar.style.display = "none";
+    }, 7000); // 5000 milisegundos (5 segundos)
+  </script>
+  <script>
+    function mostrarCuenta() {
+      var tipoDeCuentaSeleccionada = document.getElementById("tipoDeCuenta").value;
+      console.log("este es el tipo de cuenta: " + tipoDeCuentaSeleccionada);
+      var cuentas = {{ catalogo | safe }}[tipoDeCuentaSeleccionada];
+      var selectCuentas = document.getElementById("nombreCuenta");
+      //se limpia el select cuentas
+      selectCuentas.innerHTML = "";
+
+      for (let clave in cuentas) {
+        if (cuentas.hasOwnProperty(clave)) {
+          let valor = cuentas[clave];
+          var opcion = document.createElement("option");
+          opcion.text = clave + " -> " + valor;
+          opcion.value = valor;
+          selectCuentas.add(opcion);
+        }
+      }
+    }
+    
+    function valor(){
+      var cuentas = document.getElementById("nombreCuenta").value;
+      console.log("esta es la cuenta que selecciono -> " + cuentas)
+    }
+  </script>
 </body>
 
 {% endblock %}
