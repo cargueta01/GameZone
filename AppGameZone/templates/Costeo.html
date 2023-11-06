@@ -126,28 +126,28 @@
         document.getElementById('calcularTotales').addEventListener('click', function () {
             var costeo = JSON.parse('{{ costeo | safe }}'); // Convierte el objeto Python a JavaScript
             if (costeo.length === 0) {
-            // No hay datos, establece todos los totales en cero
-            var totalMateriaPrima = 0;
-            var totalManoDeObra = 0;
-            var totalFabicacion = 0;
-            var totalOrden = 0;
-            var totalCostoUnitario = 0;
-            var precioVenta = 0;
+                // No hay datos, establece todos los totales en cero
+                var totalMateriaPrima = 0;
+                var totalManoDeObra = 0;
+                var totalFabicacion = 0;
+                var totalOrden = 0;
+                var totalCostoUnitario = 0;
+                var precioVenta = 0;
             } else {
-            var totalMateriaPrima = costeo.reduce(function (acc, item) {
-                return acc + (item.materiaPrima * item.costoMateriaPrima);
-            }, 0);
+                var totalMateriaPrima = costeo.reduce(function (acc, item) {
+                    return acc + (item.materiaPrima * item.costoMateriaPrima);
+                }, 0);
 
-            var totalManoDeObra = costeo.reduce(function (acc, item) {
-                return acc + (item.manoDeObra * item.costoManoDeObra);
-            }, 0);
+                var totalManoDeObra = costeo.reduce(function (acc, item) {
+                    return acc + (item.manoDeObra * item.costoManoDeObra);
+                }, 0);
 
-            var tasaCIF = costeo[0].tasaCIF / 100;
+                var tasaCIF = costeo[0].tasaCIF / 100;
 
-            var totalFabicacion = totalManoDeObra * tasaCIF;
-            var totalOrden = totalMateriaPrima + totalManoDeObra + totalFabicacion;
-            var totalCostoUnitario = totalOrden / 1;
-            var precioVenta = totalOrden + (totalOrden * 0.1012085);
+                var totalFabicacion = totalManoDeObra * tasaCIF;
+                var totalOrden = totalMateriaPrima + totalManoDeObra + totalFabicacion;
+                var totalCostoUnitario = totalOrden / 1;
+                var precioVenta = totalOrden + (totalOrden * 0.1012085);
             }
             // Actualiza los elementos en tu HTML con los nuevos valores
             document.getElementById('totalMateriaPrima').textContent = totalMateriaPrima.toFixed(2);
