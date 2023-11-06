@@ -3,6 +3,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import CatalogoCuenta, LibroMayor, RegistroTransaccion, Inventario, CierreContable, ManoObra, Costeo
 import json
+from django.contrib import messages
+from datetime import datetime
 
 
 # cuentas que existen segun su categoria en el catalogo de cuentas
@@ -36,31 +38,43 @@ def Catalogo_Cuenta(request):
 
 def transaccion(request):
 
-    valorCuentas = catalogo['Gastos']
-    print("esto es el valor de las cuentas: " + str(valorCuentas))
+    valorCuentas = catalogo['Activo']
     libros = LibroMayor.objects.all()
 
     if request.method == 'POST':
         libroseleccionado = request.POST.get('libroSeleccionado')
+        #selecciona el tipo de cuenta
         tipoDeCuenta = request.POST.get('tipoDeCuenta')
+        #selecciona la cuenta del catalogo
         cuenta = request.POST.get('cuenta')
+        #busca el codigo de cuenta por la cuenta seleccionada
         codigoCatalogo = buscar_clave_por_valor(catalogo, cuenta)
+        #busca el libro seleccionado para guardar la transaccion de la cuenta
         libroGuardar = libros.get(nombreLibro=libroseleccionado)
+        #selecciona el tipo de monto debe o haber
         tipoDeMonto = request.POST.get('tipoDeMonto')
+        #guarda la fecha de la transaccion
         fechaDeRegistro = request.POST.get('fechaDeRegistro')
+        #validar que la fechaDeRegistro este en el rango fechaDeApertura y fechaDeCierre
+        if fechaDeRegistro < str(libroGuardar.fechaDeApertura) or fechaDeRegistro > str(libroGuardar.fechaDeCierre):
+            messages.success(request, 'La fecha de registro esta fuera de rango del libro seleccionado')
+            return render(request, "Reg_Transaccion.html", {'valorCuentas': valorCuentas,
+                                                            'libros': libros, 'catalogo' : catalogo,})
+        else:
+            messages.success(request, 'la transaccion se guardo con exito')
         monto = request.POST.get('montoTransaccion')
         descripcion = request.POST.get('descripcion')
-        print("este es el codigo del catalogo " + str(codigoCatalogo))
 
-        cat = CatalogoCuenta.objects.create(
-            tipoDeCuenta=tipoDeCuenta, nombreDeCuenta=cuenta, codigo=codigoCatalogo)
+        cat = CatalogoCuenta.objects.create(tipoDeCuenta=tipoDeCuenta, nombreDeCuenta=cuenta, codigo=codigoCatalogo)
+        
         RegistroTransaccion.objects.create(fechaDeRegistro=fechaDeRegistro, tipoDeMonto=tipoDeMonto,
                                            montoTransaccion=monto, descripcion=descripcion, registroCatalogo=cat,
                                            registroLibro=libroGuardar)
     mensaje = ""
+    catalogo_serializado = json.dumps(list(catalogo.values()))
     return render(request, "Reg_Transaccion.html", {'valorCuentas': valorCuentas,
-                                                    'libros': libros, 'mensaje': mensaje}
-                  )
+                                                    'libros': libros, 'catalogo' : catalogo,
+                                                    'catalogo_serializado': catalogo_serializado})
 
 def formlibromayor(request):
     if request.method == 'POST':
@@ -113,16 +127,13 @@ def libromayor(request):
                     sumas[new_key] = ["", abs(operacion)]
                 else:
                     sumas[new_key] = [abs(operacion), ""]
-                # print("esta es la lista: "+ str(j)+" y su debe : "+str(sumas[new_key]))
+   
             else:
                 operacion = haber - debe
                 if operacion < 0:
                     sumas[new_key] = [abs(operacion), ""]
                 else:
                     sumas[new_key] = ["", abs(operacion)]
-
-        # print("estos son los resultados:\n" + str(sumas))
-        # print("\nesta es una cuenta:" + str(sumas['Inventario']))
 
     return render(request, "Lib_Mayor.html", {'cuentas': cuentas, 'sumas': sumas, 'libros': libros,
                                               'titulo': libroTitulo})
@@ -218,7 +229,7 @@ def cierrecontable(request):
     busqueda = RegistroTransaccion.objects.filter(registroLibro=libroSeleccionado)
     for i in busqueda:
         if i.registroCatalogo.nombreDeCuenta == 'Inventario' and contador == 0 and i.tipoDeMonto == 'Debe':
-            print("este es el inventario: " + str(i.montoTransaccion))
+
             inventarioInicial = i.montoTransaccion
             contador += 1
 
@@ -285,7 +296,7 @@ def Inventario_a(request):
 
             entradas = Inventario.objects.filter(tipoDeMovimiento='Entrada').order_by("fechaDeMovimiento")
             entradas = entradas.reverse()
-            #print(f"esta es la cantidad de material {cantidadMaterial} y esta la cantidad de producto {entradas[1].residuo}" )
+            
             if len(entradas) > 0 and tipoMovimiento == 'Salida':
                 for a in entradas:
                     #supon que la cantidadMaterial es 590

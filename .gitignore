@@ -2,16 +2,16 @@
 *.log
 *.pot
 *.pyc
-AppGameZone/__pycache__/
-AppGameZone/migrations/
-db.sqlite3/
-identifier.sqlite/
-.gitignore/
+AppGameZone/__pycache__
+AppGameZone/migrations
+db.sqlite3
+identifier.sqlite
+.gitignore
 
 
 # Ambiente virtual (por ejemplo, si usas virtualenv o venv)
 venv/
-.env/
+.en
 
 # Dependencias de Python (puedes agregar más si usas otras herramientas)
 /lib/
@@ -36,5 +36,5 @@ venv/
 
 #setting.py de la carpeta GameZone
 GameZone/settings.py
-GameZone/__pycache__/
+GameZone/__pycache__
 ```
