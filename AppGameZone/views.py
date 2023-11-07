@@ -91,13 +91,14 @@ def libromayor(request):
     cuentas = None
     sumas = None
 
-    # buscar en RegistroTransaccion por registroLibro
-    cuentas = RegistroTransaccion.objects.first()
-
-    # consultar todos los libros mayores
+    # se muestra todas las cuentas
+    """ cuentas = RegistroTransaccion.objects.all()
+    cuentas = list(cuentas[0])
+    print(f"\nesta es la cuenta: {cuentas}") """
+    # consultar todos los libros mayores    
     libros = LibroMayor.objects.all()
-    libroTitulo = LibroMayor.objects.first()
-
+    #libroTitulo = LibroMayor.objects.first()
+    libroTitulo = None
     if request.method == 'POST':
         libroSeleccionado = request.POST.get('libroSeleccionado')
         print("este es el el id: " + str(libroSeleccionado))
@@ -115,9 +116,11 @@ def libromayor(request):
         for j in lista:
             debe = 0
             haber = 0
+            #print(f"\naqui ver el error: {cuentas}")
             if cuentas is not None:
                 #aqui es para hacer la sumatria de los montos de cada cuenta en debe y haber
                 for c in cuentas:
+                    
                     if c.registroCatalogo.nombreDeCuenta == j:
                         if c.tipoDeMonto == 'Debe':
                             debe += c.montoTransaccion
