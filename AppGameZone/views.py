@@ -81,8 +81,8 @@ def formlibromayor(request):
         nombreLibro = request.POST.get('nombreLibro')
         fechaApertura = request.POST.get('fechaApertura')
         fechaCierre = request.POST.get('fechaCierre')
-        LibroMayor.objects.create(
-            nombreLibro=nombreLibro, fechaDeApertura=fechaApertura, fechaDeCierre=fechaCierre)
+        LibroMayor.objects.create(nombreLibro=nombreLibro, fechaDeApertura=fechaApertura, fechaDeCierre=fechaCierre,
+                                  saldoAcreedor=0, saldoDeudor=0)
         print("\nse creo el libro mayor\n")
     return render(request, "Form_LibroMayor.html")
 
@@ -92,11 +92,12 @@ def libromayor(request):
     sumas = None
 
     # buscar en RegistroTransaccion por registroLibro
-    cuentas = RegistroTransaccion.objects.filter(registroLibro=1)
+    cuentas = RegistroTransaccion.objects.first()
 
     # consultar todos los libros mayores
     libros = LibroMayor.objects.all()
-    libroTitulo = LibroMayor.objects.get(idLibro=1)
+    libroTitulo = LibroMayor.objects.first()
+
     if request.method == 'POST':
         libroSeleccionado = request.POST.get('libroSeleccionado')
         print("este es el el id: " + str(libroSeleccionado))
@@ -114,13 +115,16 @@ def libromayor(request):
         for j in lista:
             debe = 0
             haber = 0
-            for c in cuentas:
-                if c.registroCatalogo.nombreDeCuenta == j:
-                    if c.tipoDeMonto == 'Debe':
-                        debe += c.montoTransaccion
-                    elif c.tipoDeMonto == 'Haber':
-                        haber += c.montoTransaccion
+            if cuentas is not None:
+                #aqui es para hacer la sumatria de los montos de cada cuenta en debe y haber
+                for c in cuentas:
+                    if c.registroCatalogo.nombreDeCuenta == j:
+                        if c.tipoDeMonto == 'Debe':
+                            debe += c.montoTransaccion
+                        elif c.tipoDeMonto == 'Haber':
+                            haber += c.montoTransaccion
             new_key = j.replace(' ', '_')
+            #aqui es para poder posicionar los resultantes de debe y haber en cada tabla de cuenta
             if i == 'Activo' or i == 'Gastos':
                 operacion = debe - haber
                 if operacion < 0:
