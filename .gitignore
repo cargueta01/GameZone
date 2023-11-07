@@ -36,5 +36,5 @@ venv/
 
 #setting.py de la carpeta GameZone
 GameZone/settings.py
-GameZone/__pycache__
+GameZone/__pycache__/
 ```
