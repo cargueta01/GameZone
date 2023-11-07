@@ -248,7 +248,7 @@ def cierrecontable(request):
 
     mercancias_disponibles = compras_netas + inventarioInicial
 
-    costo_de_ventas = mercancias_disponibles - 7000
+    costo_de_ventas = mercancias_disponibles - sumas['Inventario']
 
     return render(request, "Cierre_Cont.html",{ 'libros': libros, 'ventas_netas': ventas_netas, 
                             'compras_netas': compras_netas, 'compras_totales': compras_totales, 
