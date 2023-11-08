@@ -22,7 +22,8 @@ catalogo = {
 
     'Ingresos': {'5101': 'Devoluciones sobre compra', '5102': 'Descuento sobre compra', '5103': 'Ventas'}
 }
-
+#porcentaje de iva
+iva = 0.13
 def buscar_clave_por_valor(diccionario, valor_buscar):
     for elemento, sub_diccionario in diccionario.items():
         for clave, valor in sub_diccionario.items():
@@ -60,9 +61,11 @@ def transaccion(request):
             messages.success(request, 'La fecha de registro esta fuera de rango del libro seleccionado')
             return render(request, "Reg_Transaccion.html", {'valorCuentas': valorCuentas,
                                                             'libros': libros, 'catalogo' : catalogo,})
-        else:
-            messages.success(request, 'la transaccion se guardo con exito')
+            
         monto = request.POST.get('montoTransaccion')
+        if cuenta == 'IVA crédito fiscal' or cuenta == 'IVA débito fiscal':
+            monto = float(monto)
+            monto = monto * iva
         descripcion = request.POST.get('descripcion')
 
         cat = CatalogoCuenta.objects.create(tipoDeCuenta=tipoDeCuenta, nombreDeCuenta=cuenta, codigo=codigoCatalogo)
@@ -70,7 +73,8 @@ def transaccion(request):
         RegistroTransaccion.objects.create(fechaDeRegistro=fechaDeRegistro, tipoDeMonto=tipoDeMonto,
                                            montoTransaccion=monto, descripcion=descripcion, registroCatalogo=cat,
                                            registroLibro=libroGuardar)
-    mensaje = ""
+        messages.success(request, 'la transaccion se guardo con exito')
+
     catalogo_serializado = json.dumps(list(catalogo.values()))
     return render(request, "Reg_Transaccion.html", {'valorCuentas': valorCuentas,
                                                     'libros': libros, 'catalogo' : catalogo,

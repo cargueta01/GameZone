@@ -29,7 +29,7 @@
 
           <div class="col-md-4">
             <label class="form-label">Tipo de Movimiento</label>
-            <select class="form-select" name="tipoMovimiento" required>
+            <select class="form-select" name="tipoMovimiento" id="movimiento" onchange="DesactivarInput()" required>
               <option value="Entrada">Entrada</option>
               <option value="Salida">Salida</option>
             </select>
@@ -51,7 +51,7 @@
 
           <div class="col-md-12">
             <label class="form-label">Precio Unitario del Material</label>
-            <input type="number" class="form-control" name="precioUnitario">
+            <input type="number" step="0.01" class="form-control" name="precioUnitario" id="precioUnitario">
 
           </div><br>
         </div><br>
@@ -171,6 +171,16 @@
 
 
   <script src="../static/bootstrap/js/form-validation.js"></script>
+  <script>
+     function DesactivarInput(){
+      var movimiento = document.getElementById("movimiento").value;
+      if(movimiento == "Entrada"){
+        document.getElementById("precioUnitario").disabled = false;
+      }else{
+        document.getElementById("precioUnitario").disabled = true;
+      }
+    }
+  </script>
 </body>
 
 {% endblock %}
